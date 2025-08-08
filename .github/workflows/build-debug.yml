@@ -17,25 +17,26 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Grant execute permission for gradlew
+      - name: Grant execute permission for Gradle wrapper
         run: chmod +x gradlew
-        
+
       - name: Download Real-ESRGAN model
         if: env.HF_TOKEN != ''
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-         MODEL_URL="https://huggingface.co/qualcomm/Real-ESRGAN-x4plus/resolve/main/Real-ESRGAN-x4plus.tflite"
-         mkdir -p app/src/main/assets
-         echo "Downloading Real-ESRGAN model..."
-         curl -L -H "Authorization: Bearer $HF_TOKEN" "$MODEL_URL" -o app/src/main/assets/model.tflite
-         ls -lh app/src/main/assets/model.tflite
+          MODEL_URL="https://huggingface.co/qualcomm/Real-ESRGAN-x4plus/resolve/main/Real-ESRGAN-x4plus.tflite"
+          mkdir -p app/src/main/assets
+          echo "Downloading Real-ESRGAN model..."
+          curl -L -H "Authorization: Bearer $HF_TOKEN" "$MODEL_URL" -o app/src/main/assets/model.tflite
+          ls -lh app/src/main/assets/model.tflite
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Lia-App-Debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Sign Debug APK with generic key
+        run: |
+          echo "Generating generic debug keystore..."
+          keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android,O=Android,C=US"
+          echo "Signing APK..."
+          jarsigner -keysto
