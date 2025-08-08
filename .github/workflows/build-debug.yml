@@ -31,11 +31,41 @@ jobs:
     curl -L -H "Authorization: Bearer $HF_TOKEN" "$MODEL_URL" -o app/src/main/assets/model.tflite
     ls -lh app/src/main/assets/model.tflite  
 
+     # Build the debug APK
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
-      - name: Upload APK
+      # Sign the APK with a generic debug key
+      - name: Sign APK with Debug Keystore
+        run: |
+          # Create a debug keystore
+          keytool -genkeypair \
+            -v \
+            -keystore debug.keystore \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+          # Sign the APK
+          jarsigner -verbose \
+            -keystore debug.keystore \
+            -storepass android \
+            -keypass android \
+            app/build/outputs/apk/debug/app-debug.apk \
+            androiddebugkey
+
+          # Align & optimize APK
+          $ANDROID_HOME/build-tools/*/zipalign -v 4 \
+            app/build/outputs/apk/debug/app-debug.apk \
+            app-signed.apk
+
+      # Upload signed APK
+      - name: Upload Signed APK
         uses: actions/upload-artifact@v3
         with:
-          name: Lia-App-Debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Lia-App-Signed
+          path: app-signed.apk
