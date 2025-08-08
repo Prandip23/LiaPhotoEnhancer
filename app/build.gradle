@@ -1,0 +1,33 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.example.lia'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.lia"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:1.10.1"
+    implementation "androidx.activity:activity-compose:1.8.0"
+    implementation "androidx.compose.ui:ui:1.6.0"
+    implementation "androidx.compose.material:material:1.6.0"
+    implementation "org.tensorflow:tensorflow-lite:2.15.0"
+    implementation "org.tensorflow:tensorflow-lite-gpu:2.15.0"
+    implementation "io.coil-kt:coil-compose:2.4.0"
+}
