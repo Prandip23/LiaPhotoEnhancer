@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace 'com.example.lia'
-    compileSdk 34
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.example.lia"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -20,7 +20,22 @@ android {
             minifyEnabled false
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        compose true // Ensure Compose is enabled
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion "1.5.3" // Example: Use the version compatible with Kotlin 1.9.10
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
+
 
 dependencies {
     implementation "androidx.core:core-ktx:1.10.1"
